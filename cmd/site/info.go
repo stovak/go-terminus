@@ -6,26 +6,21 @@ package site
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/stovak/go-terminus/config"
-	"github.com/stovak/go-terminus/pkg/models"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/spf13/cobra"
+	"github.com/stovak/go-terminus/config"
+	"github.com/stovak/go-terminus/pkg/models"
 )
 
 func NewSiteInfoCommand(c *config.TerminusConfig) *cobra.Command {
 	return &cobra.Command{
 		GroupID: "site",
-		Use:     "site:info",
+		Use:     "site:info <sitename>|<site_id>",
 		Short:   "Get basic information for a site",
-		Long: `A longer description that spans multiple lines and likely contains examples
-		and usage of using your command. For example:
-
-		Cobra is a CLI library for Go that empowers applications.
-		This application is a tool to generate the needed files
-		to quickly create a Cobra application.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			site_id := args[0]
 			if site_id == "" {
