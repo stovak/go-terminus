@@ -5,6 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/stovak/go-terminus/cmd/self"
+	"github.com/stovak/go-terminus/cmd/site"
+	"github.com/stovak/go-terminus/config"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -13,6 +16,7 @@ import (
 
 var (
 	cfgFile string
+	tc      = config.NewConfig()
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -34,39 +38,49 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	c := initConfig()
+	if c != nil {
+		fmt.Println(c)
+	}
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-terminus.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.terminus/config)")
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose output")
+	rootCmd.AddGroup(&cobra.Group{
+		ID:    "site",
+		Title: "Site commands",
+	})
+	rootCmd.AddGroup(&cobra.Group{
+		ID:    "self",
+		Title: "Terminus' innards",
+	})
+	rootCmd.AddCommand(site.NewSiteInfoCommand(tc))
+	rootCmd.AddCommand(self.NewConfigCommand(tc))
+	rootCmd.AddCommand(self.NewSiteVersionCommand(tc))
 }
 
 // initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".go-terminus" (without extension).
-		viper.AddConfigPath(home + "/.terminus")
-		viper.SetConfigType("yaml")
-		viper.SetConfigName("config")
-	}
-
+func initConfig() *config.TerminusConfig {
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+	viper.AddConfigPath(home + "/.terminus")
+	viper.SetConfigType("yaml")
+	viper.SetConfigName("config")
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		fmt.Printf("Using config file: %s  \n", viper.ConfigFileUsed())
+		err := viper.Unmarshal(tc)
+		if err != nil {
+			rootCmd.Println("Unable to decode into struct ", err.Error())
+		}
 	}
+	if tc.Verbose {
+		fmt.Println("Verbose output turned on.")
+	}
+	return tc
 }

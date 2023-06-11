@@ -1,0 +1,56 @@
+{
+  "created": 1686341325,
+  "created_by_user_id": "541aafe5-ab58-4e5c-b5ed-ae36988e8de1",
+  "drush_version": 8,
+  "framework": "drupal8",
+  "holder_id": "541aafe5-ab58-4e5c-b5ed-ae36988e8de1",
+  "holder_type": "user",
+  "last_code_push": {
+    "timestamp": "2023-06-09T20:11:07",
+    "user_uuid": null
+  },
+  "name": "terminus-testing",
+  "organization": "5d821d26-ffcf-4cf4-bb3a-2c9e1ab38986",
+  "owner": "541aafe5-ab58-4e5c-b5ed-ae36988e8de1",
+  "php_version": "72",
+  "plan_name": "Sandbox",
+  "preferred_availability_zone": "us-central1-a",
+  "preferred_zone": "us-central1",
+  "region": "us-central1",
+  "service_level": "free",
+  "upstream": {
+    "url": "https://github.com/pantheon-upstreams/drupal-composer-managed.git",
+    "product_id": "bde48795-b16d-443f-af01-8b1790caa1af",
+    "branch": "main"
+  },
+  "label": "terminus-testing",
+  "id": "213c76a9-2a32-4f5f-a565-e9b2ac3f6f96",
+  "frozen": false,
+  "preferred_zone_label": "United States",
+  "holder": {
+    "profile": {
+      "full_name": "Tom Stovall",
+      "firstname": "Tom",
+      "lastname": "Stovall",
+      "registration_context": null,
+      "marketing_email_consent_implied": false,
+      "modified": 1611170989,
+      "marketing_email_consent": false,
+      "country": null,
+      "state": null,
+      "experiments": {
+        "welcome_video": "not_shown"
+      },
+      "initial_identity_name": null,
+      "opt_in_new_dashboard": true,
+      "maxdevsites": 2,
+      "verify": "d3fac01e7c538bc276e990dbcf334048",
+      "organization": "Pantheon",
+      "guilty_of_abuse": null,
+      "default_to_new_dashboard": true,
+      "initial_identity_strategy": null
+    },
+    "id": "541aafe5-ab58-4e5c-b5ed-ae36988e8de1",
+    "email": "tom.stovall@pantheon.io"
+  }
+}%
