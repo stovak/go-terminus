@@ -1,4 +1,4 @@
-package models
+package config
 
 import (
 	"encoding/json"
@@ -40,5 +40,9 @@ func (s *Session) Validate() bool {
 
 // AddSessionHeader adds the session headers to the request
 func (s *Session) AddSessionHeader(req *http.Request) {
+	if !s.Validate() {
+		// if the session is invalid, don't add the header
+		return
+	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", s.Session))
 }

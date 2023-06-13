@@ -1,6 +1,8 @@
 package models
 
+import "context"
+
 type ModelInterface interface {
-	ctx *context.Context
-	func Context() *context.Context
+	GetPath() string
+	Ctx() *context.Context
 }

@@ -2,6 +2,8 @@ package collections
 
 import (
 	"github.com/stovak/go-terminus/config"
+	"github.com/stovak/go-terminus/pkg/models"
+	"net/http"
 )
 
 // CollectionInterface is the interface for all collections
@@ -11,16 +13,17 @@ type CollectionInterface interface {
 	GetItemByIndex(index int) CollectionInterface
 	String() string
 	GetPath() string
+	GetCollectionRequest() *http.Request
 }
 
 // Collection is the base struct for all collections
 type Collection struct {
 	tc    *config.TerminusConfig
-	Items []CollectionInterface
+	Items []models.ModelInterface
 }
 
 // AddItem adds an item to the collection
-func (c *Collection) AddItem(item CollectionInterface) {
+func (c *Collection) AddItem(item models.ModelInterface) {
 	c.Items = append(c.Items, item)
 }
 

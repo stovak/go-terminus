@@ -38,7 +38,7 @@ func NewSiteInfoCommand(c *config.TerminusConfig) *cobra.Command {
 					"Content-Type": {"application/json"},
 				},
 			}
-			models.GetCachedSession().AddSessionHeader(&req)
+			config.GetCachedSession().AddSessionHeader(&req)
 			resp, _ := http.DefaultClient.Do(&req)
 			if resp.StatusCode != 200 {
 				body := make([]byte, resp.ContentLength)

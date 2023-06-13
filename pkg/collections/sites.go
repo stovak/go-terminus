@@ -3,6 +3,7 @@ package collections
 import (
 	"github.com/stovak/go-terminus/config"
 	"github.com/stovak/go-terminus/pkg/models"
+	"net/http"
 )
 
 const (
@@ -20,6 +21,10 @@ func NewSites(tc *config.TerminusConfig) *Sites {
 	return &Sites{
 		tc: tc,
 	}
+}
+
+func (s *Sites) GetCollectionRequest() *http.Request {
+	return s.tc.PrepareRequest("GET", sitePath, nil)
 }
 
 func (s *Sites) GetPath() string {
