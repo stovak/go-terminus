@@ -18,5 +18,7 @@ tasks:
       - ./bin/terminus
   format:
     cmds:
-      - go fmt ./cmd
-      - go fmt ./pkg/...
+      - go fmt ./... && goimports -w ./..
+  test:
+    cmds:
+      - go test -v ./...

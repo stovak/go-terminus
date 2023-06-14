@@ -4,11 +4,13 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"fmt"
+	"os"
+
 	"github.com/stovak/go-terminus/cmd/self"
 	"github.com/stovak/go-terminus/cmd/site"
 	"github.com/stovak/go-terminus/config"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -16,7 +18,7 @@ import (
 
 var (
 	cfgFile string
-	tc      = config.NewConfig()
+	tc      = config.NewConfig(context.Background())
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -58,8 +60,9 @@ func init() {
 		Title: "Terminus' innards",
 	})
 	rootCmd.AddCommand(site.NewSiteInfoCommand(tc))
-	rootCmd.AddCommand(self.NewConfigCommand(tc))
-	rootCmd.AddCommand(self.NewSiteVersionCommand(tc))
+	rootCmd.AddCommand(self.NewSelfConfigCommand(tc))
+	rootCmd.AddCommand(self.NewSelfVersionCommand(tc))
+	rootCmd.AddCommand(site.NewSiteListCommand(tc))
 }
 
 // initConfig reads in config file and ENV variables if set.

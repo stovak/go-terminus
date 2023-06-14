@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"time"
@@ -20,12 +21,16 @@ type Config interface {
 	Write(to io.WriteCloser) error
 }
 
-func NewConfig(ctx *context.Context) *TerminusConfig {
+// NewConfig Create a default TerminusConfig object.
+// It is the base struct for all terminus configurations
+func NewConfig(ctx context.Context) *TerminusConfig {
+	home, _ := os.UserHomeDir()
 	return &TerminusConfig{
-		ctx:     ctx,
+		ctx:     &ctx,
 		cfg:     make(map[string]any),
 		Verbose: false,
-		Config:  "~/.terminus/config.yaml",
+		Config:  home + "/.terminus/config.yml",
+		Host:    "terminus.pantheon.io",
 		Version: version,
 		Timeout: 5 * time.Second,
 		Build:   getCommitHash(),
@@ -36,6 +41,7 @@ func NewConfig(ctx *context.Context) *TerminusConfig {
 type TerminusConfig struct {
 	Config  string `mapstructure:"config"`
 	Verbose bool   `mapstructure:"verbose"`
+	Host    string `mapstructure:"host"`
 
 	Version string
 	Build   string
@@ -44,6 +50,14 @@ type TerminusConfig struct {
 
 	cfg map[string]any
 	ctx *context.Context
+}
+
+func (tc *TerminusConfig) GetUrl(path string) *url.URL {
+	return &url.URL{
+		Scheme: "https",
+		Host:   tc.Host,
+		Path:   path,
+	}
 }
 
 func (tc *TerminusConfig) Get(key string) any {
@@ -82,13 +96,21 @@ func (tc *TerminusConfig) getClient() *http.Client {
 	}
 }
 
-func (tc *TerminusConfig) PrepareRequest(m string, u string, b io.Reader) *http.Request {
-	req, err := http.NewRequestWithContext(*tc.ctx, m, u, b)
-	if err != nil {
-		fmt.Println("Failed to create request:", err)
-		os.Exit(1)
+func (tc *TerminusConfig) CreateRequest(m string, u string, b io.ReadCloser) *http.Request {
+	req := &http.Request{
+		Method: m,
+		URL:    tc.GetUrl(u),
+		Body:   b,
+		Header: map[string][]string{
+			// "User-Agent": {"Terminus/" + tc.GetVersion()},
+			"Accept": {"application/json"},
+		},
 	}
 	tc.Session.AddSessionHeader(req)
+	if tc.Verbose {
+		fmt.Printf("Request: %#v", req)
+		fmt.Printf("Url: %#v", req.URL)
+	}
 	return req
 }
 

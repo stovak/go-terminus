@@ -1,9 +1,10 @@
 package auth
 
 import (
+	"net/url"
+
 	"github.com/spf13/cobra"
 	"github.com/stovak/go-terminus/config"
-	"net/url"
 )
 
 func NewLoginCommand(tc *config.TerminusConfig) *cobra.Command {

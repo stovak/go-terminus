@@ -1,16 +1,20 @@
 package collections
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/stovak/go-terminus/config"
 	"github.com/stovak/go-terminus/pkg/models"
-	"net/http"
 )
 
 // CollectionInterface is the interface for all collections
 type CollectionInterface interface {
-	AddItem(item CollectionInterface)
-	GetItems() []CollectionInterface
-	GetItemByIndex(index int) CollectionInterface
+	AddItem(item models.ModelInterface)
+	GetItems() []models.ModelInterface
+	GetItemByIndex(index int) models.ModelInterface
 	String() string
 	GetPath() string
 	GetCollectionRequest() *http.Request
@@ -28,16 +32,33 @@ func (c *Collection) AddItem(item models.ModelInterface) {
 }
 
 // GetItems returns all items from the collection
-func (c *Collection) GetItems() []CollectionInterface {
+func (c *Collection) GetItems() []models.ModelInterface {
 	return c.Items
 }
 
 // GetItemByIndex returns a single item from the collection
-func (c *Collection) GetItemByIndex(index int) CollectionInterface {
+func (c *Collection) GetItemByIndex(index int) models.ModelInterface {
 	return c.Items[index]
 }
 
 // String returns the name of the collection
 func (c *Collection) String() string {
 	return "Collection"
+}
+
+func (c *Collection) CreateCollectionRequest() *http.Request {
+	return c.tc.CreateRequest("GET", sitePath, nil)
+}
+
+func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
+	resp := c.tc.SendRequest(req)
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("error getting site: %s", resp.Status)
+	}
+	body, _ := io.ReadAll(resp.Body)
+	err := json.Unmarshal(body, &c)
+	if err != nil {
+		return err
+	}
+	return nil
 }

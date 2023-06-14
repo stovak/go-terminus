@@ -6,7 +6,7 @@ import (
 	"github.com/stovak/go-terminus/config"
 )
 
-func NewConfigCommand(c *config.TerminusConfig) *cobra.Command {
+func NewSelfConfigCommand(c *config.TerminusConfig) *cobra.Command {
 	return &cobra.Command{
 		GroupID: "self",
 		Use:     "config",

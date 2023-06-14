@@ -14,6 +14,11 @@ func NewSiteListCommand(tc *config.TerminusConfig) *cobra.Command {
 		Short:   "Get a list of sites",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			sc := collections.NewSites(tc)
+			err := sc.ProcessCollectionResponse(sc.CreateCollectionRequest())
+			if err != nil {
+				return err
+			}
+			cmd.Printf("%#v\n", sc)
 			return nil
 		},
 	}
