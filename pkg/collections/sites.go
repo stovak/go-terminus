@@ -2,10 +2,11 @@ package collections
 
 import (
 	"github.com/stovak/go-terminus/config"
+	"strings"
 )
 
 const (
-	sitePath = "/api/sites"
+	sitePath = "/api/user/{user_id}/membership/sites"
 )
 
 type Sites struct {
@@ -21,5 +22,5 @@ func NewSites(tc *config.TerminusConfig) *Sites {
 }
 
 func (s *Sites) GetPath() string {
-	return sitePath
+	return strings.Replace(sitePath, "{user_id}", s.tc.Session.UserId, 1)
 }

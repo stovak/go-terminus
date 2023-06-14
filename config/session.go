@@ -8,7 +8,12 @@ import (
 	"time"
 )
 
+const (
+	path = "/api/auth/session"
+)
+
 type Session struct {
+	tc        *TerminusConfig
 	Session   string `json:"session"`
 	ExpiresAt int64  `json:"expires_at"`
 	UserId    string `json:"user_id"`
@@ -45,4 +50,10 @@ func (s *Session) AddSessionHeader(req *http.Request) {
 		return
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", s.Session))
+}
+
+func (s *Session) PrepareRequest(method string, path string, body interface{}) http.Request {
+	req, _ := s.tc.PrepareRequest(method, path, body)
+	s.AddSessionHeader(req)
+	return *req
 }

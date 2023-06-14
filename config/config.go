@@ -32,7 +32,7 @@ func NewConfig(ctx context.Context) *TerminusConfig {
 		Config:  home + "/.terminus/config.yml",
 		Host:    "terminus.pantheon.io",
 		Version: version,
-		Timeout: 5 * time.Second,
+		Timeout: 30 * time.Second,
 		Build:   getCommitHash(),
 		Session: GetCachedSession(),
 	}

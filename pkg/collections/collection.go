@@ -47,7 +47,7 @@ func (c *Collection) String() string {
 }
 
 func (c *Collection) CreateCollectionRequest() *http.Request {
-	return c.tc.CreateRequest("GET", sitePath, nil)
+	return c.tc.CreateRequest("GET", c.GetPath(), nil)
 }
 
 func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
@@ -61,4 +61,8 @@ func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
 		return err
 	}
 	return nil
+}
+
+func (c *Collection) GetPath() string {
+	return ""
 }
