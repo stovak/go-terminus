@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/stovak/go-terminus/cmd/env"
+
 	"github.com/stovak/go-terminus/cmd/self"
 	"github.com/stovak/go-terminus/cmd/site"
 	"github.com/stovak/go-terminus/config"
@@ -59,10 +61,15 @@ func init() {
 		ID:    "self",
 		Title: "Terminus' innards",
 	})
+	rootCmd.AddGroup(&cobra.Group{
+		ID:    "env",
+		Title: "Environment commands",
+	})
 	rootCmd.AddCommand(site.NewSiteInfoCommand(tc))
 	rootCmd.AddCommand(self.NewSelfConfigCommand(tc))
 	rootCmd.AddCommand(self.NewSelfVersionCommand(tc))
 	rootCmd.AddCommand(site.NewSiteListCommand(tc))
+	rootCmd.AddCommand(env.NewEnvInfoCommand(tc))
 }
 
 // initConfig reads in config file and ENV variables if set.

@@ -1,11 +1,9 @@
 package models
 
 import (
-	"github.com/stovak/go-terminus/config"
-)
+	"strings"
 
-const (
-	sitePath = "/api/site/{id}?get_stats=true"
+	"github.com/stovak/go-terminus/config"
 )
 
 type Site struct {
@@ -23,11 +21,12 @@ type Site struct {
 func NewSite(tc *config.TerminusConfig) *Site {
 	return &Site{
 		Model: Model{
-			tc: tc,
+			Path: "/api/site/{id}?get_stats=true",
+			Tc:   tc,
 		},
 	}
 }
 
 func (s *Site) GetPath() string {
-	return sitePath
+	return strings.Replace(s.Path, "{id}", s.Id, 1)
 }

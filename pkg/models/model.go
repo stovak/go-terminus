@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/stovak/go-terminus/pkg/request"
 	"io"
 	"net/http"
 	"strings"
@@ -17,18 +18,20 @@ type ModelInterface interface {
 }
 
 type Model struct {
-	tc *config.TerminusConfig
+	Path    string
+	Tc      *config.TerminusConfig
+	Builder request.Builder
 }
 
 func (m *Model) CreateModelRequest(id string) *http.Request {
-	req := m.tc.CreateRequest("GET", m.GetPath(), nil)
+	req := m.Builder.CreateRequest("GET", m.GetPath(), nil)
 	newPath := strings.Replace(req.URL.Path, "{id}", id, 1)
 	req.URL.Path = newPath
 	return req
 }
 
 func (m *Model) ProcessModelResponse(req *http.Request) (*Model, error) {
-	resp := m.tc.SendRequest(req)
+	resp := m.Builder.SendRequest(req)
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("error getting site: %s", resp.Status)
 	}

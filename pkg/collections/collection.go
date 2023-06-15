@@ -22,7 +22,8 @@ type CollectionInterface interface {
 
 // Collection is the base struct for all collections
 type Collection struct {
-	tc    *config.TerminusConfig
+	Path  string
+	Tc    *config.TerminusConfig
 	Items []models.ModelInterface
 }
 
@@ -47,11 +48,11 @@ func (c *Collection) String() string {
 }
 
 func (c *Collection) CreateCollectionRequest() *http.Request {
-	return c.tc.CreateRequest("GET", c.GetPath(), nil)
+	return c.Tc.CreateRequest("GET", c.GetPath(), nil)
 }
 
 func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
-	resp := c.tc.SendRequest(req)
+	resp := c.Tc.SendRequest(req)
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("error getting site: %s", resp.Status)
 	}
@@ -63,6 +64,8 @@ func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
 	return nil
 }
 
+// GetPath returns the path for the collection
 func (c *Collection) GetPath() string {
-	return ""
+	fmt.Println("instance of Collection")
+	return c.Path
 }

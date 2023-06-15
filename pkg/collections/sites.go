@@ -1,12 +1,10 @@
 package collections
 
 import (
-	"github.com/stovak/go-terminus/config"
+	"fmt"
 	"strings"
-)
 
-const (
-	sitePath = "/api/user/{user_id}/membership/sites"
+	"github.com/stovak/go-terminus/config"
 )
 
 type Sites struct {
@@ -16,11 +14,13 @@ type Sites struct {
 func NewSites(tc *config.TerminusConfig) *Sites {
 	return &Sites{
 		Collection: Collection{
-			tc: tc,
+			Path: "/api/user/{user_id}/membership/sites",
+			Tc:   tc,
 		},
 	}
 }
 
 func (s *Sites) GetPath() string {
-	return strings.Replace(sitePath, "{user_id}", s.tc.Session.UserId, 1)
+	fmt.Println("instance of Sites")
+	return strings.Replace(s.Path, "{user_id}", s.Tc.Session.UserId, 1)
 }

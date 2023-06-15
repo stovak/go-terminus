@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"time"
@@ -52,14 +50,6 @@ type TerminusConfig struct {
 	ctx *context.Context
 }
 
-func (tc *TerminusConfig) GetUrl(path string) *url.URL {
-	return &url.URL{
-		Scheme: "https",
-		Host:   tc.Host,
-		Path:   path,
-	}
-}
-
 func (tc *TerminusConfig) Get(key string) any {
 	return tc.cfg[key]
 }
@@ -88,37 +78,4 @@ func getCommitHash() string {
 	}
 
 	return string(commitHash)
-}
-
-func (tc *TerminusConfig) getClient() *http.Client {
-	return &http.Client{
-		Timeout: tc.Timeout,
-	}
-}
-
-func (tc *TerminusConfig) CreateRequest(m string, u string, b io.ReadCloser) *http.Request {
-	req := &http.Request{
-		Method: m,
-		URL:    tc.GetUrl(u),
-		Body:   b,
-		Header: map[string][]string{
-			// "User-Agent": {"Terminus/" + tc.GetVersion()},
-			"Accept": {"application/json"},
-		},
-	}
-	tc.Session.AddSessionHeader(req)
-	if tc.Verbose {
-		fmt.Printf("Request: %#v", req)
-		fmt.Printf("Url: %#v", req.URL)
-	}
-	return req
-}
-
-func (tc *TerminusConfig) SendRequest(req *http.Request) *http.Response {
-	resp, err := tc.getClient().Do(req)
-	if err != nil {
-		fmt.Println("Failed to send request:", err)
-		os.Exit(1)
-	}
-	return resp
 }

@@ -21,6 +21,7 @@ func NewSiteInfoCommand(c *config.TerminusConfig) *cobra.Command {
 		GroupID: "site",
 		Use:     "site:info <sitename>|<site_id>",
 		Short:   "Get basic information for a site",
+		Args:    cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			site_id := args[0]
 			if site_id == "" {

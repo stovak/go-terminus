@@ -13,7 +13,6 @@ const (
 )
 
 type Session struct {
-	tc        *TerminusConfig
 	Session   string `json:"session"`
 	ExpiresAt int64  `json:"expires_at"`
 	UserId    string `json:"user_id"`
@@ -28,6 +27,7 @@ func GetCachedSession() *Session {
 	if err != nil {
 		return &Session{}
 	}
+	fmt.Printf("Session: %#v\n", toReturn)
 	return &toReturn
 }
 
@@ -44,16 +44,11 @@ func (s *Session) Validate() bool {
 }
 
 // AddSessionHeader adds the session headers to the request
-func (s *Session) AddSessionHeader(req *http.Request) {
+func (s *Session) AddSessionHeader(req *http.Request) error {
 	if !s.Validate() {
 		// if the session is invalid, don't add the header
-		return
+		return fmt.Errorf("session is invalid")
 	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", s.Session))
-}
-
-func (s *Session) PrepareRequest(method string, path string, body interface{}) http.Request {
-	req, _ := s.tc.PrepareRequest(method, path, body)
-	s.AddSessionHeader(req)
-	return *req
+	req.Header.Add("Authorization", fmt.Sprintf("%s", s.Session))
+	return nil
 }
