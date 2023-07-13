@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"fmt"
+	"github.com/stovak/go-terminus/pkg/models"
 	"strings"
 
 	"github.com/stovak/go-terminus/config"
@@ -9,6 +9,7 @@ import (
 
 type Sites struct {
 	Collection
+	Items []models.Site
 }
 
 func NewSites(tc *config.TerminusConfig) *Sites {
@@ -21,6 +22,15 @@ func NewSites(tc *config.TerminusConfig) *Sites {
 }
 
 func (s *Sites) GetPath() string {
-	fmt.Println("instance of Sites")
 	return strings.Replace(s.Path, "{user_id}", s.Tc.Session.UserId, 1)
+}
+
+// Get returns a list of sites from the Terminus API
+func (s *Sites) Get() error {
+	req := s.CreateCollectionRequest("GET")
+	err := s.ProcessCollectionResponse(req)
+	if err != nil {
+		return err
+	}
+	return nil
 }

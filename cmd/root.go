@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/stovak/go-terminus/cmd/env"
 
@@ -76,7 +77,7 @@ func init() {
 func initConfig() *config.TerminusConfig {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
-	viper.AddConfigPath(home + "/.terminus")
+	viper.AddConfigPath(path.Join(home, ".terminus"))
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")
 	viper.AutomaticEnv() // read in environment variables that match

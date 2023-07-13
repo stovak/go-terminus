@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"time"
@@ -23,6 +25,11 @@ type Config interface {
 // It is the base struct for all terminus configurations
 func NewConfig(ctx context.Context) *TerminusConfig {
 	home, _ := os.UserHomeDir()
+	sess, err := GetCachedSession()
+	if err != nil {
+		fmt.Println("Failed to retrieve session:", err)
+		os.Exit(1)
+	}
 	return &TerminusConfig{
 		ctx:     &ctx,
 		cfg:     make(map[string]any),
@@ -32,7 +39,7 @@ func NewConfig(ctx context.Context) *TerminusConfig {
 		Version: version,
 		Timeout: 30 * time.Second,
 		Build:   getCommitHash(),
-		Session: GetCachedSession(),
+		Session: sess,
 	}
 }
 
@@ -68,6 +75,18 @@ func (tc *TerminusConfig) GetVersion() string {
 
 func (tc *TerminusConfig) GetContext() *context.Context {
 	return tc.ctx
+}
+
+func (tc *TerminusConfig) CreateRequest(m string, p string, v *url.Values) *http.Request {
+	toReturn := http.Request{
+		Method: m,
+		URL:    &url.URL{Scheme: "https", Host: tc.Host, RawPath: p},
+		Header: map[string][]string{
+			"Accept": {"application/json"},
+		},
+	}
+	_ = tc.Session.AddAuthHeaderToRequest(&toReturn)
+	return &toReturn
 }
 
 func getCommitHash() string {

@@ -10,6 +10,10 @@ import (
 	"github.com/stovak/go-terminus/pkg/models"
 )
 
+var (
+	cli = http.Client{}
+)
+
 // CollectionInterface is the interface for all collections
 type CollectionInterface interface {
 	AddItem(item models.ModelInterface)
@@ -47,17 +51,20 @@ func (c *Collection) String() string {
 	return "Collection"
 }
 
-func (c *Collection) CreateCollectionRequest() *http.Request {
-	return c.Tc.CreateRequest("GET", c.GetPath(), nil)
+func (c *Collection) CreateCollectionRequest(m string) *http.Request {
+	return c.Tc.CreateRequest(m, c.GetPath(), nil)
 }
 
 func (c *Collection) ProcessCollectionResponse(req *http.Request) error {
-	resp := c.Tc.SendRequest(req)
+	resp, err := cli.Do(req)
+	if err != nil {
+		return err
+	}
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("error getting site: %s", resp.Status)
 	}
 	body, _ := io.ReadAll(resp.Body)
-	err := json.Unmarshal(body, &c)
+	err = json.Unmarshal(body, &c.Items)
 	if err != nil {
 		return err
 	}

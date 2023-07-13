@@ -26,28 +26,27 @@ func (b *Builder) getClient() *http.Client {
 	}
 }
 
-func (b *Builder) CollectionRequest(path string) *http.Request {
-	req := b.CreateRequest("GET", path, nil)
-	resp := b.SendRequest(req)
-
+func (b *Builder) CollectionRequest(m string, path string, body *io.ReadCloser) *http.Request {
+	req := b.CreateRequest(m, path, body)
+	return req
 }
 
-func (b *Builder) ModelRequest(path string) *http.Request {
-	req := b.CreateRequest("GET", path, nil)
-	resp := b.SendRequest(req)
-
+func (b *Builder) ModelRequest(m string, path string, body *io.ReadCloser) *http.Request {
+	req := b.CreateRequest(m, path, body)
+	return req
 }
 
-func (b *Builder) CreateRequest(m string, u string, body io.ReadCloser) *http.Request {
+func (b *Builder) CreateRequest(m string, u string, body *io.ReadCloser) *http.Request {
 	r := http.Request{
 		Method: m,
 		URL:    b.GetUrl(u),
 		Header: http.Header{},
-		Body:   body,
+		Body:   *body,
 	}
-	// Dereference and turn pinnocio into a real boy
-	req := r.WithContext(*b.Tc.GetContext())
-	b.Tc.Session.AddSessionHeader(req)
+	err := b.Tc.Session.AddAuthHeaderToRequest(&r)
+	if err != nil {
+		return nil
+	}
 	if b.Tc.Verbose {
 		trace := &httptrace.ClientTrace{
 			DNSDone: func(dnsInfo httptrace.DNSDoneInfo) {
@@ -63,9 +62,9 @@ func (b *Builder) CreateRequest(m string, u string, body io.ReadCloser) *http.Re
 				fmt.Println("Got First Response Byte")
 			},
 		}
-		req = req.WithContext(httptrace.WithClientTrace(req.Context(), trace))
+		return r.WithContext(httptrace.WithClientTrace(*b.Tc.GetContext(), trace))
 	}
-	return req
+	return r.WithContext(*b.Tc.GetContext())
 }
 
 func (b *Builder) SendRequest(req *http.Request) *http.Response {
