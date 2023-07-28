@@ -16,10 +16,10 @@ import (
 	"github.com/stovak/go-terminus/pkg/models"
 )
 
-func NewSiteInfoCommand(c *config.TerminusConfig) *cobra.Command {
+func NewSiteInfoCommand(tc *config.TerminusConfig) *cobra.Command {
 	return &cobra.Command{
-		GroupID: "site",
-		Use:     "site:info <sitename>|<site_id>",
+		GroupID: "sites",
+		Use:     "sites:info <sitename>|<site_id>",
 		Short:   "Get basic information for a site",
 		Args:    cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		RunE: func(cmd *cobra.Command, args []string) error {

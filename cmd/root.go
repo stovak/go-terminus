@@ -55,8 +55,8 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.terminus/config)")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose output")
 	rootCmd.AddGroup(&cobra.Group{
-		ID:    "site",
-		Title: "Site commands",
+		ID:    "sites",
+		Title: "Sites commands",
 	})
 	rootCmd.AddGroup(&cobra.Group{
 		ID:    "self",
@@ -69,7 +69,7 @@ func init() {
 	rootCmd.AddCommand(site.NewSiteInfoCommand(tc))
 	rootCmd.AddCommand(self.NewSelfConfigCommand(tc))
 	rootCmd.AddCommand(self.NewSelfVersionCommand(tc))
-	rootCmd.AddCommand(site.NewSiteListCommand(tc))
+	rootCmd.AddCommand(site.NewSitesListCommand(tc))
 	rootCmd.AddCommand(env.NewEnvInfoCommand(tc))
 }
 
